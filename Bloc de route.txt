@@ -28,6 +28,9 @@ get : 'http://localhost:4000/api/refresh_image'
 - récupère le nom et la PdP du user selon son Id.
 get : 'http://localhost:4000/api/user/${id}'
 
+- récupère le nombre de collection et le nombre d'images d'un user selon son Id.
+get : 'http://localhost:4000/api/userActivity/${id}'
+
 - collecte les collections propres à un user.
 get : 'http://localhost:4000/api/collections/${user}'
 
