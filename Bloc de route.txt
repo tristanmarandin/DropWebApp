@@ -6,7 +6,7 @@ get : 'http://localhost:4000/api/images/${id}'
 - modifie le statut de visibilité d'une image selon son id.
 update : 'http://localhost:4000/api/images/${imageId}/visible'
 
-- envoie l'instruction et les paramètres de génération au backend à destination de l'API SD. Le backend ne renvoie rien.
+- envoie l'instruction et les paramètres de génération au middleend à destination de l'API SD. Le middleend crée ainsi un objet image qu'il renvoie au frontend pour être affiché et qu'il sauvegarde dans le backend (DB).
 post : 'http://localhost:4000/api/instructions'
 body: JSON.stringify({
           instruction,
@@ -18,9 +18,6 @@ body: JSON.stringify({
           generationSteps: Number.isNaN(generationSteps) ? 20 : generationSteps,
           guidanceScale: Number.isNaN(guidanceScaleValue) ? 7.5 : guidanceScaleValue,
         })
-
-- récupère les images générées. Le backend dispose d'un tableau d'images contenant les images nouvellement générées et les envoie au frontend. Cette requête s'effectuera cinq fois par seconde.
-get : 'http://localhost:4000/api/refresh_image'
 
 
 2. UserPage
