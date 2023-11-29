@@ -6,8 +6,8 @@ get : 'http://localhost:4000/api/images/${id}'
 - modifie le statut de visibilité d'une image selon son id.
 update : 'http://localhost:4000/api/images/${imageId}/visible'
 
-- envoie l'instruction et les paramètres de génération au middleend à destination de l'API SD. Le middleend crée ainsi un objet image qu'il renvoie au frontend pour être affiché et qu'il sauvegarde dans le backend (DB).
-post : 'http://localhost:4000/api/instructions'
+- envoie l'instruction et les paramètres de génération au middleend à destination de l'API SD. Le middleend crée ainsi un objet image qu'il renvoie au frontend pour être affiché et qu'il sauvegarde en base de données.
+post : 'http://localhost:4000/api/image/generate'
 body: JSON.stringify({
           instruction,
           selectedButtons,
