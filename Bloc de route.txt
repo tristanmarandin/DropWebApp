@@ -50,4 +50,4 @@ post : 'http://localhost:4000/api/user/connection'
 5. UserInformation
 
 - envoie les modifications apportées au profil utilisateur et reçoit le nouveau User mis à jour
-post : 'http://localhost:4000/api/user/modify'
+post : 'http://localhost:4000/api/user/modifyUser'
