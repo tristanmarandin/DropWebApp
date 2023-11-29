@@ -42,4 +42,7 @@ get : 'http://localhost:4000/api/images/${imageId}/visible'
 - récupère les images dont la publication a été autorisée par le créateur (visible == true) ET dont le prompt correspond à la recherche entrée par l'utilisateur. A noter qu'un principe de Fuzzy research devra être implémenté. Le backend renvoie les images en question.
 post : 'http://localhost:4000/api/images?visible=true'
 
+4. Connection
 
+- envoie les credentials et reçoit l'User connecté
+post : 'http://localhost:4000/api/user/connection'
