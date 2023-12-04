@@ -267,6 +267,7 @@ const HomePage = () => {
 
   const handleSendInstruction = async () => {
     try {
+      let userID = "admin";
       // Get the instruction from the user input field or textarea
       const instructionTextArea = document.getElementById('instructionInput');
       const instruction = instructionTextArea.value;
@@ -294,6 +295,7 @@ const HomePage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userID,
           instruction,
           selectedButtons,
           buttonLabelsByTab,
@@ -352,8 +354,8 @@ const HomePage = () => {
     // Function to update the gallery
     const fetchImages = async () => {
       try {
-        // Fetch the images with community = true from the backend API
-        const response = await fetch('http://localhost:4000/api/images?user=true');
+        // Fetch the images with user = true from the backend API
+        const response = await fetch('http://localhost:4000/api/user');
         const data = await response.json();
 
         // Update the images state with the fetched images
