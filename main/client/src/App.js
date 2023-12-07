@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './HomePage';
 import CommunityPage from './CommunityPage';
 import StyleCollectionPage from './StyleCollectionPage';
+import UserPage from './UserPage.js'
 import SupportPage from './SupportPage';
 
 const App = () => {
@@ -11,6 +12,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/community" element={<CommunityPage />} />
+        <Route path="/user" element={<UserPage />} />
         <Route path="/styleCollection" element={<StyleCollectionPage />} />
         {/* Add the route for the StyleCollectionPage with the different styles */}
         <Route path="/geometric-style-collection" element={<StyleCollectionPage selectedStyle="geometric" />} />

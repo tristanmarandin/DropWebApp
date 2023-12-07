@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { FaLock, FaLockOpen } from 'react-icons/fa';
 import { FaDownload } from 'react-icons/fa';
 import { FaImage , FaFileImage , FaRulerCombined, FaSortAmountDownAlt, FaRandom, FaSeedling } from 'react-icons/fa';
+import { FaChevronRight, FaChevronDown } from 'react-icons/fa';
 
 import './HomePage.css';
 
@@ -13,52 +14,34 @@ const HomePage = () => {
     { id: 'image2', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Siberischer_tiger_de_edit02.jpg/640px-Siberischer_tiger_de_edit02.jpg', prompt: '', width: '', height: '', generationStep: '', seed: '', guidanceScale: '' },
     { id: 'image3', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Siberischer_tiger_de_edit02.jpg/640px-Siberischer_tiger_de_edit02.jpg', prompt: '', width: '', height: '', generationStep: '', seed: '', guidanceScale: '' },
     { id: 'image4', src: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/41/Siberischer_tiger_de_edit02.jpg/640px-Siberischer_tiger_de_edit02.jpg', prompt: '', width: '', height: '', generationStep: '', seed: '', guidanceScale: '' },
-  ]);  
+  ]);
+  const [isInstructionTutorialDone, setIsInstructionTutorialDone] = useState(false);  
   const [isInstructionButtonClicked, setIsInstructionButtonClicked] = useState(false);
   const [clickedImageId, setClickedImageId] = useState(null);
   const [isSubmitButtonClicked, setIsSubmitButtonClicked] = useState(false);
-  const [activeTab, setActiveTab] = useState('Style');
+  const [activeTabs, setActiveTabs] = useState({
+    Style: false,
+    Format: false,
+    Parameters: false,
+  });
   const [buttonStates, setButtonStates] = useState({
-    geometric: false,
-    anime: false,
-    cartoon: false,
-    simple: false,
-    complex: false,
     detailed: false,
     colorful: false,
     bw: false,
-    logo: false,
-    minimalist: false,
-    intricatedetails: false,
     highcontrast: false,
-    patchdesign: false,
-    vectorlineart: false,
     realistic: false,
     myasaki: false,
     steampunk: false,
-    disney: false,
-    watercolor: false,
-    oilpainting: false,
-    sculpture: false,
-    vaporwave: false,
-    digitalart: false,
-    conceptart: false,
-    pixar: false,
     japanesestyle: false,
-    handpoked: false,
-    americanoldschool: false,
-    vintage: false,
+    comics: false,
     closeup: false,
     longshot: false,
     landscape: false,
     background: false,
     portrait: false,
-    automatic1111: false,
-    redream: false,
-    arcanediffusion: false,
-    wandducstyle: false,
-    gta5artworkdiffusion: false,
   });
+  const [showContinueButtonStyle, setShowContinueButtonStyle] = useState(true);
+  const [showContinueButtonFormat, setShowContinueButtonFormat] = useState(true);
   const possibleImageDimensions = [
     { value: '1152 x 768', width: '1024', height: '688'},
     { value: '1088 x 896', width: '1024', height: '848'},
@@ -105,6 +88,11 @@ const HomePage = () => {
 
   const handleInstructionChange = (event) => {
     setInstruction(event.target.value);
+  
+    // Check if the Enter key was pressed
+    if (event.key === 'Enter') {
+      handleSendInstructionTutorial();
+    }
   };
 
   const handleImageClick = async (event, id) => {
@@ -162,9 +150,56 @@ const HomePage = () => {
     document.body.removeChild(a);
   };
   
-  const handleTabSelect = (tabName) => {
-    setActiveTab(tabName);
+  const handleTabSelect = (tabName, shouldScroll = false) => {
+    setActiveTabs(prevState => ({
+      ...prevState,
+      [tabName]: !prevState[tabName] // Toggle the active state
+    }));
+  
+    if (shouldScroll) {
+      scrollToTab(tabName);
+    }
   };
+  
+  const openTabSelect = (tabName, shouldScroll = false) => {
+    setActiveTabs(prevState => ({
+      ...prevState,
+      [tabName]: true // Toggle the active state
+    }));
+  
+    if (shouldScroll) {
+      scrollToTab(tabName);
+    }
+  };
+
+  const handleContinueToStyle = () => {
+    openTabSelect('Style', true);
+  };
+
+  const handleContinueToFormat = () => {
+    openTabSelect('Format', true);
+    setShowContinueButtonStyle(false); // Hide the button after click
+  };
+
+  const handleContinueToParameters = () => {
+    openTabSelect('Parameters', true);
+    setShowContinueButtonFormat(false); // Hide the Format section's continue button
+  };
+  
+
+  const scrollToTab = (tabName) => {
+    const tabElement = document.getElementById(`${tabName.toLowerCase()}Tab`);
+    if (tabElement) {
+      tabElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+  
+  const handleScrollToTop = () => {
+    window.scrollTo({
+      top: 0, // Scroll to the top of the window
+      behavior: 'smooth' // Smooth scroll
+    });
+  };  
 
   const handleButtonToggle = (buttonName, tabName) => {
     setButtonStates((prevState) => ({
@@ -176,35 +211,15 @@ const HomePage = () => {
   const getButtonLabelsByTab = (tabName) => {
     const buttonLabels = {
       Style: {
-        geometric: 'geometric',
-        anime: 'anime',
-        cartoon: 'cartoon',
-        simple: 'simple',
-        complex: 'complex, complicate',
         detailed: 'highly detailed',
         colorful: 'colorful, color',
         bw: 'black and white',
-        logo: 'logo',
-        minimalist: 'minimalist',
-        intricatedetails: 'intricate details',
         highcontrast: 'high contrast',
-        patchdesign: 'patch design',
-        vectorlineart: 'vector line art',
         realistic: 'realistic',
         myasaki: 'Myasaki',
         steampunk: 'steampunk',
-        disney: 'Disney',
-        watercolor: 'watercolor',
-        oilpainting: 'oilpainting',
-        sculpture: 'sculpture',
-        vaporwave: 'vaporwave',
-        digitalart: 'digital art',
-        conceptart: 'concept art',
-        pixar: 'Pixar',
         japanesestyle: 'japanese style, oriental style',
-        handpoked: 'handpoked, stick and poke',
-        americanoldschool: 'american old school tattoo',
-        vintage: 'vintage',
+        comics: 'marvel, DC Comics',
       },
       Format: {
         closeup: 'close up',
@@ -212,14 +227,7 @@ const HomePage = () => {
         landscape: 'landscape',
         background: 'background',
         portrait: 'portrait',
-      },
-      Model: {
-        automatic1111: 'automatic1111',
-        redream: 'redream',
-        arcanediffusion: 'arcanediffusion',
-        wandducstyle: 'wandducstyle',
-        gta5artworkdiffusion: 'gta5artworkdiffusion',
-      },
+      }
     };
   
     return buttonLabels[tabName] || {};
@@ -246,8 +254,20 @@ const HomePage = () => {
     setSeed(event.target.value);
   };
 
+  // Function to handle instruction tutorial
+  const handleSendInstructionTutorial = (event) => {
+    if (isInstructionTutorialDone == false) {
+      setIsInstructionTutorialDone(true);
+      handleContinueToStyle();
+    } else {
+      handleSendInstruction();
+      setIsInstructionButtonClicked(true);
+    }
+  };
+
   const handleSendInstruction = async () => {
     try {
+      let userID = "admin";
       // Get the instruction from the user input field or textarea
       const instructionTextArea = document.getElementById('instructionInput');
       const instruction = instructionTextArea.value;
@@ -275,6 +295,7 @@ const HomePage = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userID,
           instruction,
           selectedButtons,
           buttonLabelsByTab,
@@ -333,8 +354,8 @@ const HomePage = () => {
     // Function to update the gallery
     const fetchImages = async () => {
       try {
-        // Fetch the images with community = true from the backend API
-        const response = await fetch('http://localhost:4000/api/images?user=true');
+        // Fetch the images with user = true from the backend API
+        const response = await fetch('http://localhost:4000/api/user');
         const data = await response.json();
 
         // Update the images state with the fetched images
@@ -381,7 +402,14 @@ const HomePage = () => {
               </div>
               <div className="head-title">DROP</div>
             </div>
+            <NavLink to="/user" className="user-profile-link">
+              <div className="user-profile-container">
+                <img src="Drop.jpg" alt="User Profile" className="user-profile-image" />
+                <div className="user-name">USER NAME</div>
+              </div>
+            </NavLink>
           </div>
+          
           <ul className="menu">
             <li className='activeLink'>
               <NavLink to="/">Home</NavLink>
@@ -400,9 +428,10 @@ const HomePage = () => {
             className="instruction-input" 
             placeholder="Enter instruction here..." 
             value={instruction}
-            onChange={handleInstructionChange}  
+            onChange={handleInstructionChange}
+            onKeyPress={handleInstructionChange}   
           />
-          <button onClick={() => { handleSendInstruction(); setIsInstructionButtonClicked(true); }} className="send-instruction-button">
+          <button onClick={() => { handleSendInstructionTutorial()}} className="send-instruction-button">
             <i className="arrow right"></i>
           </button>
         </div>
@@ -458,98 +487,28 @@ const HomePage = () => {
           </div>
         }
 
-        {/* Tablist */}
         <ul className="tablist">
           <li
-            className={activeTab === 'Style' ? 'active' : ''}
-            onClick={() => handleTabSelect('Style')}
+            className={activeTabs === 'Style' ? 'active' : ''}
+            onClick={() => handleTabSelect('Style', true)}
           >
-            Style
+            {activeTabs.Style ? <FaChevronDown className="chevron-icon" /> : <FaChevronRight className="chevron-icon" />} Style
           </li>
-          <li
-            className={activeTab === 'Format' ? 'active' : ''}
-            onClick={() => handleTabSelect('Format')}
-          >
-            Format
-          </li>
-          <li
-            className={activeTab === 'Modèle' ? 'active' : ''}
-            onClick={() => handleTabSelect('Modèle')}
-          >
-            Modèle
-          </li>
-          <li
-            className={activeTab === 'Paramètres' ? 'active' : ''}
-            onClick={() => handleTabSelect('Paramètres')}
-          >
-            Paramètres
-          </li>
-        </ul>
+        </ul>       
 
-        <div className="tab-content" id="styleTab" style={{ display: activeTab === 'Style' ? 'block' : 'none' }}>
+        <div className="tab-content" id="styleTab" style={{ display: activeTabs.Style ? 'block' : 'none' }}>
           <div className="style-tab">
               <div className="style-section">
                 <h2 className="section-title">Basic Styles</h2>
                 <div className="style-buttons"> {/* Add this wrapper */}
                   <div 
-                    className={`style-button ${buttonStates.geometric ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('geometric', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="geometric.jpg" alt="Geometric" />
-                    </div>
-                    <h3>Geometric</h3>
-                    <p>Explore the beauty of geometric patterns and shapes.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.anime ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('anime', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="anime.jpg" alt="Anime" />
-                    </div>
-                    <h3>Anime</h3>
-                    <p>Bring your artwork to life with vibrant anime-inspired styles.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.cartoon ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('cartoon', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="cartoon.jpg" alt="Cartoon" />
-                    </div>
-                    <h3>Cartoon</h3>
-                    <p>Add a touch of fun and humor with playful cartoon styles.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.simple ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('simple', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="simple.jpg" alt="Simple" />
-                    </div>
-                    <h3>Simple</h3>
-                    <p>Embrace minimalism and let simplicity speak in your art.</p>
-                  </div>
-                  <div 
                     className={`style-button ${buttonStates.complex ? 'button-on' : 'button-off'}`}
                     onClick={() => handleButtonToggle('complex', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="complex.jpg" alt="Complex" />
-                    </div>
-                    <h3>Complex</h3>
-                    <p>Challenge yourself with intricate and complex artistic styles.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.detailed ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('detailed', 'style')}
                   >
                     <div className="button-image">
                       <img src="detailed.jpg" alt="Detailed" />
                     </div>
                     <h3>Detailed</h3>
-                    <p>Capture every fine detail with highly detailed art styles.</p>
                   </div>            
                   <div 
                     className={`style-button ${buttonStates.colorful ? 'button-on' : 'button-off'}`}
@@ -559,7 +518,6 @@ const HomePage = () => {
                       <img src="colorful.jpg" alt="Colorful" />
                     </div>
                     <h3>Colorful</h3>
-                    <p>Express your creativity with vibrant and colorful art styles.</p>
                   </div>
                   <div 
                     className={`style-button ${buttonStates.bw ? 'button-on' : 'button-off'}`}
@@ -569,37 +527,6 @@ const HomePage = () => {
                       <img src="bw.jpg" alt="B&W" />
                     </div>
                     <h3>B&W</h3>
-                    <p>Experiment with black and white aesthetics for a classic touch.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.logo ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('logo', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="logo.jpg" alt="Logo" />
-                    </div>
-                    <h3>Logo</h3>
-                    <p>Create captivating logo designs with unique artistic styles.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.minimalist ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('minimalist', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="minimalist.jpg" alt="Minimalist" />
-                    </div>
-                    <h3>Minimalist</h3>
-                    <p>Embrace simplicity and elegance with minimalist art styles.</p>          
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.intricatedetails ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('intricatedetails', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="intricatedetails.jpg" alt="Intricated Details" />
-                    </div>
-                    <h3>Intricated Details</h3>
-                    <p>Add intricate and detailed elements to your artwork for a captivating effect.</p>
                   </div>
                   <div 
                     className={`style-button ${buttonStates.highcontrast ? 'button-on' : 'button-off'}`}
@@ -609,39 +536,17 @@ const HomePage = () => {
                       <img src="highcontrast.jpg" alt="High Contrast" />
                     </div>
                     <h3>High Contrast</h3>
-                    <p>Create bold and striking compositions with high contrast styles.</p>
                   </div>
                   <div 
                     className={`style-button ${buttonStates.patchdesign ? 'button-on' : 'button-off'}`}
                     onClick={() => handleButtonToggle('patchdesign', 'style')}
                   >
                     <div className="button-image">
-                      <img src="patchdesign.jpg" alt="Patch Design" />
-                    </div>
-                    <h3>Patch Design</h3>
-                    <p>Design unique patches with custom artwork and vibrant colors.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.vectorlineart ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('vectorlineart', 'style')}
-                  >
-                    <div className="button-image">
-                      <img src="vectorlineart.jpg" alt="Vector Line Art" />
-                    </div>
-                    <h3>Vector Line Art</h3>
-                    <p>Explore clean and precise line work with vector-based art styles.</p>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.realistic ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('realistic', 'style')}
-                  >
-                    <div className="button-image">
                       <img src="realistic.jpg" alt="Realistic" />
                     </div>
                     <h3>Realistic</h3>
-                    <p>Achieve lifelike representations and detailed realism in your artwork.</p>
                   </div>
-                </div>
+                </div>      
               </div>
 
               <div className="style-section">
@@ -655,10 +560,6 @@ const HomePage = () => {
                       <img src="myasaki.jpg" alt="Myasaki" />
                     </div>
                     <h3>Myasaki</h3>
-                    <p>Pay tribute to the imaginative and whimsical world of Myasaki.</p>
-                    <NavLink to="/myasaki-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
                   </div>
                   <div 
                     className={`style-button ${buttonStates.steampunk ? 'button-on' : 'button-off'}`}
@@ -668,114 +569,6 @@ const HomePage = () => {
                       <img src="steampunk.jpg" alt="Steampunk" />
                     </div>
                     <h3>Steampunk</h3>
-                    <p>Combine Victorian aesthetics with futuristic steam-powered technology.</p>
-                    <NavLink to="/steampunk-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.disney ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('disney', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="disney.jpg" alt="Disney" />
-                      </div>
-                    <h3>Disney</h3>
-                    <p>Bring the magic of Disney to your artwork with enchanting styles.</p>
-                    <NavLink to="/disney-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.watercolor ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('watercolor', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="watercolor.jpg" alt="Watercolor" />
-                    </div>
-                    <h3>Watercolor</h3>
-                    <p>Immerse your art in the fluid beauty of watercolor painting.</p>
-                    <NavLink to="/watercolor-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.oilpainting ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('oilpainting', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="oilpainting.jpg" alt="OilPainting" />
-                    </div>
-                    <h3>Oil Painting</h3>
-                    <p>Emulate the rich textures and colors of traditional oil paintings.</p>
-                    <NavLink to="/oilpainting-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.sculpture ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('sculpture', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="sculpture.jpg" alt="Sculpture" />
-                    </div>
-                    <h3>Sculpture</h3>
-                    <p>Explore the three-dimensional artistry of sculptural styles.</p>
-                    <NavLink to="/sculpture-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.vaporwave ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('vaporwave', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="vaporwave.jpg" alt="VaporWave" />
-                    </div>
-                    <h3>VaporWave</h3>
-                    <p>Take inspiration from the retro-futuristic aesthetics of VaporWave.</p>
-                    <NavLink to="/vaporwave-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.digitalart ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('digitalart', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="digitalart.jpg" alt="Digital Art" />
-                    </div>
-                    <h3>Digital Art</h3>
-                    <p>Discover the endless possibilities of digital art styles.</p>
-                    <NavLink to="/digitalart-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.conceptart ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('conceptart', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="conceptart.jpg" alt="Concept Art" />
-                    </div>
-                    <h3>Concept Art</h3>
-                    <p>Bring your imaginative ideas to life with concept art styles.</p>
-                    <NavLink to="/conceptart-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.pixar ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('pixar', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="pixar.jpg" alt="Pixar" />
-                    </div>
-                    <h3>Pixar</h3>
-                    <p>Capture the charm and storytelling magic of Pixar animation.</p>
-                    <NavLink to="/pixar-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
                   </div>
                   <div 
                     className={`style-button ${buttonStates.japanesestyle ? 'button-on' : 'button-off'}`}
@@ -785,56 +578,39 @@ const HomePage = () => {
                       <img src="japanesestyle.jpg" alt="Japanese Style" />
                     </div>
                     <h3>Japanese Style</h3>
-                    <p>Embrace the beauty and elegance of traditional Japanese art.</p>
-                    <NavLink to="/japanese-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
                   </div>
                   <div 
-                    className={`style-button ${buttonStates.handpoked ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('handpoked', 'style')}
+                    className={`style-button ${buttonStates.japanesestyle ? 'button-on' : 'button-off'}`}
+                    onClick={() => handleButtonToggle('japanesestyle', 'oriental style')}
                     >
                     <div className="button-image">
-                      <img src="handpoked.jpg" alt="Hand Poked" />
+                      <img src="japanesestyle.jpg" alt="Japanese Style" />
                     </div>
-                    <h3>Hand Poked</h3>
-                    <p>Create unique and intricate art with hand-poked tattoo styles.</p>
-                    <NavLink to="/handpoked-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.americanoldschool ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('americanoldschool', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="americanoldschool.jpg" alt="American Old School" />
-                    </div>
-                    <h3>American Old School</h3>
-                    <p>Celebrate the nostalgia of American traditional tattoo styles.</p>
-                    <NavLink to="/americanoldstyle-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
-                  </div>
-                  <div 
-                    className={`style-button ${buttonStates.vintage ? 'button-on' : 'button-off'}`}
-                    onClick={() => handleButtonToggle('vintage', 'style')}
-                    >
-                    <div className="button-image">
-                      <img src="vintage.jpg" alt="Vintage" />
-                    </div>
-                    <h3>Vintage</h3>
-                    <p>Transport your art to the past with vintage-inspired styles.</p>
-                    <NavLink to="/vintage-style-collection">
-                      <img src="explore.jpg" alt="explore" className="explore-button" />
-                    </NavLink>
+                    <h3>Comics</h3>
                   </div>
                 </div>
               </div>
           </div>
+          {showContinueButtonStyle && (
+            <button 
+              className="continue-button"
+              onClick={handleContinueToFormat}
+            >
+              Continue
+            </button>
+          )}
         </div>
+        
+        <ul className="tablist">
+          <li
+            className={activeTabs === 'Format' ? 'active' : ''}
+            onClick={() => handleTabSelect('Format', true)}
+          >
+            {activeTabs.Format ? <FaChevronDown className="chevron-icon" /> : <FaChevronRight className="chevron-icon" />} Format
+          </li>
+        </ul>
 
-        <div className="tab-content" id="formatTab" style={{ display: activeTab === 'Format' ? 'block' : 'none' }}>
+        <div className="tab-content" id="formatTab" style={{ display: activeTabs.Format ? 'block' : 'none' }}>
           <div className="format-buttons"> {/* Add this wrapper */}
             <div 
               className={`format-button ${buttonStates.closeup ? 'button-on' : 'button-off'}`}
@@ -844,7 +620,6 @@ const HomePage = () => {
                 <img src="closeup.jpg" alt="Close Up" />
               </div>
               <h3>Close Up</h3>
-              <p>Focus on capturing intricate details with close-up shots.</p>
             </div>
             <div 
               className={`format-button ${buttonStates.longshot ? 'button-on' : 'button-off'}`}
@@ -854,7 +629,6 @@ const HomePage = () => {
                 <img src="longshot.jpg" alt="Long Shot" />
               </div>
               <h3>Long Shot</h3>
-              <p>Emphasize the subject's surroundings and context with long shots.</p>
             </div>
             <div 
               className={`format-button ${buttonStates.landscape ? 'button-on' : 'button-off'}`}
@@ -864,7 +638,6 @@ const HomePage = () => {
                 <img src="landscape.jpg" alt="Landscape" />
               </div>
               <h3>Landscape</h3>
-              <p>Capture the beauty and vastness of natural landscapes.</p>
             </div>
             <div 
               className={`format-button ${buttonStates.background ? 'button-on' : 'button-off'}`}
@@ -874,7 +647,6 @@ const HomePage = () => {
                 <img src="background.jpg" alt="Background" />
               </div>
               <h3>Background</h3>
-              <p>Enhance your artwork by focusing on background elements and scenery.</p>
             </div>
             <div 
               className={`format-button ${buttonStates.portrait ? 'button-on' : 'button-off'}`}
@@ -884,67 +656,28 @@ const HomePage = () => {
                 <img src="portrait.jpg" alt="Portrait" />
               </div>
               <h3>Portrait</h3>
-              <p>Create compelling character portraits with distinct personalities.</p>
             </div>
           </div>
+          {showContinueButtonFormat && (
+            <button 
+              className="continue-button"
+              onClick={handleContinueToParameters}
+            >
+              Continue
+            </button>
+          )}
         </div>
 
-        <div className="tab-content" id="modeleTab" style={{ display: activeTab === 'Modèle' ? 'block' : 'none' }}>
-          <div className="model-buttons"> {/* Add this wrapper */}
-            <div 
-              className={`model-button ${buttonStates.automatic1111 ? 'button-on' : 'button-off'}`}
-              onClick={() => handleButtonToggle('automatic1111', 'style')}
-              >
-              <div className="button-image">
-                <img src="automatic1111.jpg" alt="Automatic 11.11" />
-              </div>
-              <h3>Automatic 11.11</h3>
-              <p>Discover the magic of automatic generation with AI-powered 11.11 models.</p>
-            </div>
-            <div 
-              className={`model-button ${buttonStates.redream ? 'button-on' : 'button-off'}`}
-              onClick={() => handleButtonToggle('redream', 'style')}
-              >
-              <div className="button-image">
-                <img src="redream.jpg" alt="Redream" />
-              </div>
-              <h3>Redream</h3>
-              <p>Bring your wildest dreams to life with the enchanting Redream model.</p>
-            </div>
-          <div 
-              className={`model-button ${buttonStates.arcanediffusion ? 'button-on' : 'button-off'}`}
-              onClick={() => handleButtonToggle('arcanediffusion', 'style')}
-              >
-              <div className="button-image">
-                <img src="arcanediffusion.jpg" alt="Arcane Diffusion" />
-              </div>
-              <h3>Arcane Diffusion</h3>
-              <p>Unleash the mystical and arcane with the powerful Diffusion model.</p>
-            </div>
-          <div 
-              className={`model-button ${buttonStates.wandducstyle ? 'button-on' : 'button-off'}`}
-              onClick={() => handleButtonToggle('wandducstyle', 'style')}
-              >
-              <div className="button-image">
-                <img src="wandducstyle.jpg" alt="Wand-Ducstyle" />
-              </div>
-              <h3>Wand-Ducstyle</h3>
-              <p>Experience the unique style of Wand-Ducstyle for truly mesmerizing creations.</p>
-            </div>
-            <div 
-              className={`model-button ${buttonStates.gta5artworkdiffusion ? 'button-on' : 'button-off'}`}
-              onClick={() => handleButtonToggle('gta5artworkdiffusion', 'style')}
-              >
-              <div className="button-image">
-                <img src="gta5artworkdiffusion.jpg" alt="GTA5 Artwork Diffusion" />
-              </div>
-              <h3>GTA5 Artwork Diffusion</h3>
-              <p>Blend the worlds of GTA5 and artwork with the Artwork Diffusion model.</p>
-            </div>
-          </div>
-        </div>
+        <ul className="tablist">
+          <li
+            className={activeTabs === 'Parameters' ? 'active' : ''}
+            onClick={() => handleTabSelect('Parameters', true)}
+          >
+            {activeTabs.Parameters ? <FaChevronDown className="chevron-icon" /> : <FaChevronRight className="chevron-icon"/>} Paramètres
+          </li>
+        </ul>
 
-        <div className="tab-content" id="parametresTab" style={{ display: activeTab === 'Paramètres' ? 'block' : 'none' }}>
+        <div className="tab-content" id="parametresTab" style={{ display: activeTabs.Parameters ? 'block' : 'none' }}>
           <div className="parametres">
             <div className="dimension-parametre">
               <label htmlFor="dimension">
@@ -1038,6 +771,9 @@ const HomePage = () => {
                 </div>
               </div>
             </div>
+            <button onClick={() => { handleScrollToTop(); handleSendInstruction(); setIsInstructionButtonClicked(true); }} className="continue-button">
+              Generate
+            </button>
           </div> 
           
           <div className="gallery">
